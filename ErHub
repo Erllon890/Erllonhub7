@@ -1,0 +1,106 @@
+-- Variáveis para controlar o estado do pulo infinito
+local isInfJumpEnabled = false
+local walkSpeed = 16 -- Velocidade de movimento padrão
+
+-- Função para ativar o pulo infinito
+local function enableInfiniteJump()
+    game:GetService("UserInputService").JumpRequest:Connect(function()
+        if isInfJumpEnabled then
+            game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping) -- Forçar o personagem a pular
+        end
+    end)
+end
+
+-- Função para ajustar a velocidade de movimento do jogador
+local function setWalkSpeed(speed)
+    if speed >= 1 and speed <= 99999 then
+        walkSpeed = speed
+        game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = walkSpeed
+        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Velocidade de movimento ajustada para " .. walkSpeed, "All")
+    else
+        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Por favor, insira um valor entre 1 e 99999 para a velocidade de movimento.", "All")
+    end
+end
+
+-- Função para enviar mensagens em loop
+local function spamMessage(message, times)
+    for i = 1, times do
+        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
+        wait(1) -- Ajuste o intervalo de tempo entre as mensagens (em segundos)
+    end
+end
+
+-- Função para ativar ou desativar o spam de mensagens
+local function toggleSpam(enabled, message)
+    if enabled then
+        spamMessage(message, 8) -- Enviar a mensagem 8 vezes
+    else
+        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Spam desativado", "All")
+    end
+end
+
+-- Função para executar o script "juaka"
+local function executeJuakaScript()
+    loadstring(game:HttpGet("https://pastebin.com/raw/d5BS5qiX"))()
+end
+
+-- Função para executar o Infinite Yield
+local function executeInfiniteYield()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+end
+
+-- Função para executar o Tsuo Hub
+local function executeTsuoHub()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Tsuo7/TsuoHub/main/Tsuoscripts"))()
+end
+
+-- Função para executar o Redz Hub
+local function executeRedzHub()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/REDzHUB/BloxFruits/main/redz9999"))()
+end
+
+-- Função para executar o Game Hub
+local function executeGameHub()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/GamerScripter/Game-Hub/main/loader"))()
+end
+
+-- Função para verificar as mensagens no chat
+local function checkChat(message)
+    if message:lower() == "pulo on" then
+        isInfJumpEnabled = true -- Ativar o pulo infinito
+        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Pulo infinito ativado", "All")
+    elseif message:lower() == "pulo off" then
+        isInfJumpEnabled = false -- Desativar o pulo infinito
+        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Pulo infinito desativado", "All")
+    else
+        local command, value = message:match("(%a+)%s+(.*)")
+        if command and value then
+            if command:lower() == "velocidade" then
+                setWalkSpeed(tonumber(value))
+            elseif command:lower() == "spam" then
+                toggleSpam(true, value)
+            end
+        end
+    end
+end
+
+-- Conectar a função checkChat() ao evento de chat
+game:GetService("Players").LocalPlayer.Chatted:Connect(checkChat)
+
+-- Executar o script "juaka" quando o jogador escrever no chat
+game:GetService("Players").LocalPlayer.Chatted:Connect(function(message)
+    if message:lower() == "juaka" then
+        executeJuakaScript()
+    elseif message:lower() == "infinit" then
+        executeInfiniteYield()
+    elseif message:lower() == "tsuo" then
+        executeTsuoHub()
+    elseif message:lower() == "redz" then
+        executeRedzHub()
+    elseif message:lower() == "gamehub" then
+        executeGameHub()
+    end
+end)
+
+-- Ativar o pulo infinito
+enableInfiniteJump()
